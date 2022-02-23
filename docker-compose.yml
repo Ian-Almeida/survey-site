@@ -3,7 +3,60 @@ version: '3.9'
 services:
   db: 
     image: mongo
-    restart: always
+    hostname: mongodb
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: survey_site
+    
+    ports:
+      - 27017:27017
+  
+    
+    networks:
+      - mongo-network
+
+  backend: 
+    image: survey-site-backend
+
+    volumes:
+      - ./backend/app:/app/app
+
+    ports: 
+      - 8000:80
+    
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    
+    networks:
+      - mongo-network
+    
+    links:
+      - db
+
+    
+    command: /start-reload.sh
+    # command: /start.sh
+
+  frontend:
+    image: survey-site-frontend
+
+    volumes:
+      - ./frontend:/frontend
+      - '/frontend/node_modules'
+    
+    ports:
+      - 8082:8080
+      - 8083:8081
+
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+networks:
+  mongo-network:
+    driver: bridge
+
+
+    
