@@ -3,13 +3,17 @@ FROM node:lts-alpine
 EXPOSE 8080 
 EXPOSE 8081
 
-WORKDIR /app
+WORKDIR /frontend
 
-COPY package*.json ./
+ENV PATH /frontend/node_modules/.bin:$PATH
 
-RUN npm install --force
-RUN npm install @vue/cli -g
+COPY package.json /frontend/package.json
+
+# COPY package*.json ./
+
+RUN npm install 
+RUN npm install -g @quasar/cli
 
 COPY . .
 
-CMD ["npm", "run", "serve"]
+CMD ["quasar", "dev"]

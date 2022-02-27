@@ -3,7 +3,6 @@ from pymongo.database import Database
 from app.core.config import settings
 
 
-
 def getDB() -> Database:
     client = MongoClient(settings.DB_URL)
 

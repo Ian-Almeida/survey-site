@@ -8,6 +8,10 @@ authors = ["Ian Almeida <ian.almeida@edu.univali.br>"]
 python = "^3.9"
 fastapi = "^0.74.1"
 pymongo = "^4.0.1"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+pydantic = {extras = ["email"], version = "^1.9.0"}
+python-multipart = "^0.0.5"
 
 [tool.poetry.dev-dependencies]
 
