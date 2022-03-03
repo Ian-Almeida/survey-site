@@ -40,7 +40,22 @@ const routes: RouteRecordRaw[] = [
             path: 'about',
             name: 'index-home-about',
             component: () => import('pages/About.vue')
-          }
+          },
+          {
+            path: 'category',
+            name: 'index-home-category',
+            component: () => import('pages/category/Categories.vue')
+          },
+          {
+            path: 'setting',
+            name: 'index-home-setting',
+            component: () => import('pages/setting/Settings.vue')
+          },
+          {
+            path: 'form',
+            name: 'index-home-form',
+            component: () => import('pages/form/Forms.vue')
+          },
         ],
       },
     ],

@@ -55,9 +55,30 @@
 
         <q-item-section>
           <q-item-label>Questionários</q-item-label>
-          <q-item-label caption>
-            Gerencie seus questionários
-          </q-item-label>
+          <q-item-label caption>Gerencie seus questionários</q-item-label>
+        </q-item-section>
+
+      </q-item>
+
+      <q-item clickable tag="a" @click="onClickCategory">
+        <q-item-section v-if="true" avatar>
+          <q-icon name="category"/>
+        </q-item-section>
+
+        <q-item-section>
+          <q-item-label>Categorias</q-item-label>
+          <q-item-label caption>Gerencie suas categorias</q-item-label>
+        </q-item-section>
+      </q-item>
+
+      <q-item clickable tag="a" @click="onClickQuestionarios">
+        <q-item-section v-if="true" avatar>
+          <q-icon name="question_answer"/>
+        </q-item-section>
+
+        <q-item-section>
+          <q-item-label>Respostas</q-item-label>
+          <q-item-label caption>Gerencie as respostas feitas</q-item-label>
         </q-item-section>
       </q-item>
 
@@ -109,15 +130,19 @@ function onLogout() {
 }
 
 function onClickDashboard() {
-  console.log('teste')
+  void router.push({name: 'index-home-admin'});
 }
 
 function onClickQuestionarios() {
-  console.log('questionarios')
+  void router.push({name: 'index-home-form'});
+}
+
+function onClickCategory() {
+  void router.push({name: 'index-home-category'});
 }
 
 function onClickConfiguracoes() {
-  console.log('configuracoes')
+  void router.push({name: 'index-home-setting'});
 }
 
 onBeforeMount(() => {
