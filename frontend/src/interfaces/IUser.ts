@@ -6,7 +6,7 @@ export interface IUserCreate {
 }
 
 export interface IUser {
-  id: string
+  _id: string
   email: string
   full_name: string
   is_active: boolean

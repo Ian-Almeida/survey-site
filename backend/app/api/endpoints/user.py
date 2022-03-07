@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from app.models.user import User, UserCreate
+from app.models.user import User, UserCreate, UserInDB
 from typing import List
 from app.db.config_db import getDB
 from pymongo.database import Database
@@ -15,7 +15,10 @@ async def read_users_me(current_user: User = Depends(dependencies.get_current_ac
 
 
 @router.get("/", response_model=List[User])
-def get_all_users(db: Database = Depends(getDB)):
+def get_all_users(
+        db: Database = Depends(getDB),
+        current_user: User = Depends(dependencies.get_current_active_user)
+):
     users = []
     for user in db.User.find():
         users.append(User(**user))
@@ -24,13 +27,17 @@ def get_all_users(db: Database = Depends(getDB)):
 
 
 @router.post("/", response_model=User)
-async def create_user(user: UserCreate, db=Depends(getDB)):
+async def create_user(
+        user: UserCreate,
+        db=Depends(getDB),
+):
 
-    created = User(**user.__dict__, hashed_password=get_password_hash(user.password))
-    ret = db.User.insert_one(created.dict(by_alias=True))
+    to_create = UserInDB(**user.__dict__, hashed_password=get_password_hash(user.password))
 
-    if not ret:
+    new = db.User.insert_one(to_create.dict(by_alias=True))
+
+    if not new:
         raise HTTPException(status_code=500, detail='Cannot create user')
-    created.id = ret.inserted_id
-    return created
+
+    return db.User.find_one({"_id": new.inserted_id})
 

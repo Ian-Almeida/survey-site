@@ -11,8 +11,15 @@ class UserCreate(BaseModel):
     password: str
 
 
+class UserInDB(BaseModel):
+    email: EmailStr
+    full_name: str
+    is_active: bool
+    hashed_password: str
+
+
 class User(BaseModel):
-    id: Optional[PyObjectId] = Field(alias='_id')
+    id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
     email: EmailStr
     full_name: str
     is_active: bool
