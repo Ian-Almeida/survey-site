@@ -11,6 +11,13 @@ class UserCreate(BaseModel):
     password: str
 
 
+class UserUpdate(BaseModel):
+    email: Optional[EmailStr]
+    full_name: Optional[str]
+    is_active: Optional[bool]
+    password: Optional[str]
+
+
 class UserInDB(BaseModel):
     email: EmailStr
     full_name: str
