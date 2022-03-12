@@ -9,6 +9,11 @@ class CategoryCreate(BaseModel):
     color: str
 
 
+class CategoryUpdate(BaseModel):
+    title: Optional[str]
+    color: Optional[str]
+
+
 class Category(CategoryCreate):
     id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
 

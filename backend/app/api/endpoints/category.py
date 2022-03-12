@@ -5,7 +5,7 @@ from typing import List
 from app.db.config_db import getDB
 from pymongo.database import Database
 from app.core import dependencies
-from bson.objectid import ObjectId
+from app.crud import crud_category
 
 router = APIRouter()
 
@@ -15,11 +15,7 @@ def get_all_categories(
         db: Database = Depends(getDB),
         current_user: User = Depends(dependencies.get_current_active_user)
 ):
-    categories = []
-    for category in db.Category.find():
-        categories.append(Category(**category))
-
-    return categories
+    return crud_category.get_all(db=db)
 
 
 @router.post("/", response_model=Category)
@@ -29,13 +25,12 @@ def create_category(
         current_user: User = Depends(dependencies.get_current_active_user)
 ):
 
-    new = db.Category.insert_one(category_in.dict(by_alias=True))
+    created = crud_category.create(db=db, data_in=category_in)
 
-    if not new:
+    if not created:
         raise HTTPException(status_code=500, detail='Não foi possível criar a categoria')
 
-    return db.Category.find_one({"_id": new.inserted_id})
-
+    return created
 
 @router.delete("/{_id}/")
 def remove_category(
@@ -43,9 +38,10 @@ def remove_category(
         db: Database = Depends(getDB),
         current_user: User = Depends(dependencies.get_current_active_user)
 ):
-    deleted = db.Category.delete_one({"_id": ObjectId(_id)})
 
-    if not deleted.acknowledged:
-        raise HTTPException(status_code=500, detail='Não foi deletar a categoria')
+    deleted = crud_category.delete(db=db, _id=_id)
 
-    return deleted.acknowledged
+    if not deleted:
+        raise HTTPException(status_code=500, detail='Não foi possível deletar a categoria')
+
+    return deleted

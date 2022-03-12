@@ -25,12 +25,8 @@ class UserInDB(BaseModel):
     hashed_password: str
 
 
-class User(BaseModel):
+class User(UserInDB):
     id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
-    email: EmailStr
-    full_name: str
-    is_active: bool
-    hashed_password: str
 
     class Config:
         arbitrary_types_allowed = True

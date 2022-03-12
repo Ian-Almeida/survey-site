@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
-from app.models.user import User, UserCreate, UserInDB
+from app.models.user import User, UserCreate
 from typing import List
 from app.db.config_db import getDB
 from pymongo.database import Database
 from app.core import dependencies
-from app.core.auth import get_password_hash
+from app.crud import crud_user
 
 router = APIRouter()
 
@@ -32,12 +32,9 @@ async def create_user(
         db=Depends(getDB),
 ):
 
-    to_create = UserInDB(**user.__dict__, hashed_password=get_password_hash(user.password))
+    created = crud_user.create(db=db, data_in=user)
 
-    new = db.User.insert_one(to_create.dict(by_alias=True))
+    if not created:
+        raise HTTPException(status_code=500, detail='Não foi possível criar usuário')
 
-    if not new:
-        raise HTTPException(status_code=500, detail='Cannot create user')
-
-    return db.User.find_one({"_id": new.inserted_id})
-
+    return created
