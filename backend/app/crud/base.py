@@ -52,3 +52,11 @@ class CRUDBase(Generic[SchemaType, CreateSchemaType, UpdateSchemaType]):
         deleted = db[self.collection_name].delete_one({"_id": ObjectId(_id)})
 
         return deleted.acknowledged
+
+    def update(self, db: Database, _id: str, data_in: UpdateSchemaType) -> Optional[SchemaType]:
+        from pymongo import ReturnDocument
+        return db[self.collection_name].find_one_and_update(
+            {'_id': ObjectId(_id)},
+            {'$set': data_in.__dict__},
+            return_document=ReturnDocument.AFTER
+        )

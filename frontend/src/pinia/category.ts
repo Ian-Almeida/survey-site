@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import {ICategory, ICategoryCreate} from 'src/interfaces/ICategory';
+import {ICategory, ICategoryCreate, ICategoryUpdate} from 'src/interfaces/ICategory';
 import api from 'src/api';
 import {useNotificationStore} from 'src/pinia/notification';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -31,6 +31,17 @@ export const useCategoryStore = defineStore('category', {
         if (response) {
           notificationStore.showNotification('positive', 'Categoria removida com sucesso!');
           return;
+        }
+      } catch (e: Error | AxiosError | any ) {
+        notificationStore.checkApiError(e);
+      }
+    },
+    async updateCategory(payload: {_id: string, categoryIn: ICategoryUpdate}) {
+      try {
+        const response = await api.updateCategory(payload);
+        if (response) {
+          notificationStore.showNotification('positive', 'Categoria atualizada com sucesso!');
+          return response.data;
         }
       } catch (e: Error | AxiosError | any ) {
         notificationStore.checkApiError(e);

@@ -2,7 +2,7 @@ import axios from 'axios';
 import {IUser, IUserCreate} from 'src/interfaces/IUser';
 import {IToken} from 'src/interfaces/token';
 import {getAuthorization} from 'src/utils';
-import {ICategoryCreate, ICategory} from 'src/interfaces/ICategory';
+import {ICategoryCreate, ICategory, ICategoryUpdate} from 'src/interfaces/ICategory';
 
 const baseURL = 'http://localhost:8000/api';
 
@@ -24,7 +24,10 @@ export default {
     return axios.get<ICategory[]>(`${baseURL}/category/`, authHeaders());
   },
   async removeCategory(_id: string) {
-    return axios.delete<boolean>(`${baseURL}/category/${_id}`, authHeaders());
+    return axios.delete<boolean>(`${baseURL}/category/${_id}/`, authHeaders());
+  },
+  async updateCategory(payload: {_id: string, categoryIn: ICategoryUpdate}) {
+    return axios.put<ICategory>(`${baseURL}/category/${payload._id}/`, payload.categoryIn , authHeaders());
   },
   // User
   async getAccessToken(username: string, password: string) {

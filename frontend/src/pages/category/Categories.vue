@@ -12,6 +12,9 @@
           no-data-label="Não há registros de categorias"
           selection="multiple"
           v-model:selected="selectedItems"
+          :selected-rows-label="(numberOfRows) => numberOfRows > 1 ? `${numberOfRows} registros selecionados` : `${numberOfRows} registro selecionado`"
+          rows-per-page-label="Registros por página: "
+          :pagination-label="(firstRowIndex, endRowIndex, totalRowsNumber) => `${firstRowIndex}-${endRowIndex} de ${totalRowsNumber}`"
         >
           <template v-slot:top>
             <q-btn color="primary" :disable="loading" label="Adicionar" @click="createDialog = true" flat />
@@ -39,6 +42,14 @@
 
           <template #header-selection v-if="!removeMode">
 
+          </template>
+
+          <template #body-cell-actions="props">
+            <q-td key="actions" :props="props">
+              <q-icon class="cursor-pointer" name="edit" size="sm" @click="onClickEditar(props.row)">
+                <q-tooltip>Editar</q-tooltip>
+              </q-icon>
+            </q-td>
           </template>
 
           <template #body-cell-color="props">
@@ -103,7 +114,7 @@
 
         <q-card-actions align="right" class="text-primary">
           <q-btn flat label="Cancelar" v-close-popup @click="cancelCreateCategory"/>
-          <q-btn flat label="Confirmar" v-close-popup @click="confirmCreateCategory"/>
+          <q-btn flat label="Confirmar" v-close-popup @click="confirmChangeCategory"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -112,14 +123,18 @@
 
 <script lang="ts" setup>
 
-import {ICategory} from 'src/interfaces/ICategory';
+import {ICategory, ICategoryUpdate} from 'src/interfaces/ICategory';
 import {computed, onBeforeMount, ref, watch} from 'vue';
 import _ from 'lodash';
 import {useCategoryStore} from 'src/pinia/category';
+import {useQuasar} from 'quasar';
 
 const categoryStore = useCategoryStore();
+const $q = useQuasar();
 
 const loading = ref(false);
+const isEditing = ref(false);
+const toEditId = ref('');
 const createDialog = ref(false);
 const removeMode = ref(false);
 const filter = ref('');
@@ -150,35 +165,89 @@ const headers = [
     format: (val: string) => `${val}`,
     label: 'Cor'
   },
+  {
+    name: 'actions',
+    required: true,
+    align: 'center',
+    label: 'Ações'
+  },
 ];
 
 function removeItems() {
   loading.value = true;
-  _.forEach(selectedItems.value, (val) => {
-    const removed = _.remove(categoryItems.value, (item) => item === val);
-    void categoryStore.removeCategory(removed[0]._id);
-  });
-  selectedItems.value = [];
-
-  removeMode.value = false;
-  loading.value = false;
+  $q.dialog({
+    title: 'Confirmar',
+    message: 'Gostaria de remover os itens selecionados?',
+    ok: {
+      push: true,
+      color: 'primary',
+      flat: true,
+      label: 'Sim',
+    },
+    cancel: {
+      push: true,
+      color: 'negative',
+      flat: true,
+      label: 'Não',
+    },
+    persistent: true
+  }).onOk(() => {
+    _.forEach(selectedItems.value, (val) => {
+      const removed = _.remove(categoryItems.value, (item) => item === val);
+      void categoryStore.removeCategory(removed[0]._id);
+    });
+    selectedItems.value = [];
+  }).onCancel(() => {
+    // console.log('>>>> Cancel')
+  }).onDismiss(() => {
+    // console.log('I am triggered on both OK and Cancel')
+    removeMode.value = false;
+    loading.value = false;
+  })
 }
 
 function cancelCreateCategory() {
   addPickedColor.value = '';
   addTitle.value = '';
+  isEditing.value = false;
+  toEditId.value = '';
 }
 
-async function confirmCreateCategory() {
+async function confirmChangeCategory() {
   loading.value = true;
-  const createdCategory = await categoryStore.createCategory({title: addTitle.value, color: addPickedColor.value});
-  if (createdCategory) {
-    categoryItems.value.push(createdCategory);
+  if (isEditing.value) {
+    const toUpdate: ICategoryUpdate = {
+      color: addPickedColor.value,
+      title: addTitle.value,
+    }
+
+    const updated = await categoryStore.updateCategory({_id: toEditId.value, categoryIn: toUpdate});
+    if (updated) {
+      const index = _.findIndex(categoryItems.value, (item) => item._id === updated._id);
+      categoryItems.value[index] = updated;
+    }
+
+  } else {
+    const createdCategory = await categoryStore.createCategory({title: addTitle.value, color: addPickedColor.value});
+    if (createdCategory) {
+      categoryItems.value.push(createdCategory);
+    }
+
+    addPickedColor.value = '';
+    addTitle.value = '';
   }
 
-  addPickedColor.value = '';
-  addTitle.value = '';
+  isEditing.value = false;
+  toEditId.value = '';
   loading.value = false;
+}
+
+function onClickEditar(item: ICategory) {
+  isEditing.value = true;
+  createDialog.value = true;
+  toEditId.value = item._id;
+  addPickedColor.value = item.color;
+  addTitle.value = item.title;
 }
 
 watch(removeMode, (val: boolean) => {

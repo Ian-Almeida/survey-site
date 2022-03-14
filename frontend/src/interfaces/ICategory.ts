@@ -3,8 +3,11 @@ export interface ICategoryCreate {
   title: string
 }
 
-export interface ICategory {
+export interface ICategoryUpdate {
+  color?: string
+  title?: string
+}
+
+export interface ICategory extends ICategoryCreate{
   _id: string
-  color: string
-  title: string
 }

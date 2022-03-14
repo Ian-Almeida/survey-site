@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from app.models.category import Category, CategoryCreate
+from app.models.category import Category, CategoryCreate, CategoryUpdate
 from app.models.user import User
 from typing import List
 from app.db.config_db import getDB
@@ -31,6 +31,22 @@ def create_category(
         raise HTTPException(status_code=500, detail='Não foi possível criar a categoria')
 
     return created
+
+
+@router.put("/{_id}/", response_model=Category)
+def update_category(
+        _id: str,
+        category_in: CategoryUpdate,
+        db: Database = Depends(getDB),
+        current_user: User = Depends(dependencies.get_current_active_user),
+):
+    updated = crud_category.update(db=db, data_in=category_in, _id=_id)
+
+    if not updated:
+        raise HTTPException(status_code=500, detail='Não foi possível atualizar a categoria')
+
+    return updated
+
 
 @router.delete("/{_id}/")
 def remove_category(
