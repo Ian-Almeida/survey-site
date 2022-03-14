@@ -20,6 +20,7 @@ interface Props {
   seriesRadius?: any,
   seriesCenter?: any,
   titleText?: string,
+  seriesFormatter?: string,
 }
 
 use([
@@ -32,9 +33,10 @@ use([
 
 const props = withDefaults(defineProps<Props>(), {
   seriesData: [],
-  seriesRadius: ['40%', '75%'],
+  seriesRadius: ['40%', '65%'],
   seriesCenter: ['50%', '60%'],
   titleText: '',
+  seriesFormatter: '{a} <br/>{b} : {c} ({d}%)',
 }) ;
 
 const pieOptions = ref({
@@ -44,7 +46,7 @@ const pieOptions = ref({
   },
   tooltip: {
     trigger: 'item',
-    formatter: '{a} <br/>{b} : {c} ({d}%)'
+    formatter: props.seriesFormatter
   },
   // legend: {
   //   orient: 'vertical',
@@ -53,7 +55,7 @@ const pieOptions = ref({
   // },
   series: [
     {
-      name: 'Respostas',
+      name: props.titleText,
       type: 'pie',
       radius: props.seriesRadius,
       center: props.seriesCenter,

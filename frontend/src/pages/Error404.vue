@@ -1,17 +1,17 @@
 <template>
   <div
-    class="fullscreen bg-primary text-white text-center q-pa-md flex flex-center"
+    class="fullscreen bg-accent text-white text-center q-pa-md flex flex-center"
   >
     <div>
       <div style="font-size: 30vh">404</div>
 
-      <div class="text-h2" style="opacity: 0.4">Opa! Caminho errado...</div>
+      <div class="text-h2" style="opacity: 0.4"><span>Opa! Caminho errado...</span></div>
       <div class="text-h4" style="opacity: 0.4">Página não encontrada</div>
 
       <q-btn
         class="q-mt-xl"
         color="white"
-        text-color="primary"
+        text-color="accent"
         unelevated
         to="/"
         label="Voltar"
