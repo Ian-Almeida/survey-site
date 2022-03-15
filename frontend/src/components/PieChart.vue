@@ -33,7 +33,7 @@ use([
 
 const props = withDefaults(defineProps<Props>(), {
   seriesData: [],
-  seriesRadius: ['40%', '65%'],
+  seriesRadius: ['40%', '60%'],
   seriesCenter: ['50%', '60%'],
   titleText: '',
   seriesFormatter: '{a} <br/>{b} : {c} ({d}%)',
