@@ -10,7 +10,9 @@ class FormCreate(BaseModel):
     subtitle: str
     category_id: PyObjectId
     is_active: bool
-    release_date: Optional[datetime]
+    # finished: bool
+    start_date: Optional[datetime]
+    end_date: Optional[datetime]
 
 
 class FormUpdate(BaseModel):
@@ -18,7 +20,9 @@ class FormUpdate(BaseModel):
     subtitle: Optional[str]
     category_id: Optional[PyObjectId]
     is_active: Optional[bool]
-    release_date: Optional[datetime]
+    # finished: Optional[bool]
+    start_date: Optional[datetime]
+    end_date: Optional[datetime]
 
 
 class Form(FormCreate):
