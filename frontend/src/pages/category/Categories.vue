@@ -90,7 +90,6 @@
                 class="my-input"
                 readonly
                 borderless
-
                 label="Cor"
               >
                 <template v-slot:append>

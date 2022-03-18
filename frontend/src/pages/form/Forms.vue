@@ -1,8 +1,8 @@
 <template>
   <q-page class="q-gutter-lg q-pa-md">
-    <div class="row">
+    <div class="row" v-for="(form, index) in formsItems" :key="index">
       <div class="col">
-        <FormEdit />
+        <FormEdit v-model="formsItems[index]" :category-options="categoriesItems"/>
       </div>
     </div>
     <div class="row">
@@ -18,14 +18,14 @@
 <script lang="ts" setup>
 
 import {computed, onMounted, ref} from 'vue';
-import IForm, {IFormCreate} from 'src/interfaces/IForm';
-import {ICategory} from 'src/interfaces/ICategory';
+import {IFormCreate} from 'src/interfaces/IForm';
 import {useCategoryStore} from 'src/pinia/category';
 import FormEdit from 'src/components/FormEdit.vue';
 
 const categoryStore = useCategoryStore();
 
 const formsItems = ref<IFormCreate[]>([]);
+
 const categoriesItems = computed(() => categoryStore.categories);
 const editing = ref(false);
 
