@@ -23,12 +23,121 @@
           ></q-select>
         </div>
         <div class="col" style="display: flex; padding-top: 15px; padding-left: 5px">
-          <q-checkbox v-model="formModel.is_active" label="Tornar ativo" />
+          <q-checkbox v-model="agendar" label="Agendar lançamento" />
+          <q-checkbox v-if="!agendar" v-model="formModel.is_active" label="Tornar ativo" />
         </div>
       </div>
+      <div class="row q-gutter-lg" v-if="agendar">
+        <div class="col-lg-2">
+          <q-select
+            v-model="launchSelected"
+            :options="launchOptions"
+            label="Tipo de lançamento"
+          ></q-select>
+        </div>
+        <div class="col-lg-4">
+          <q-input v-model="formModel.start_date" label="Data de lançamento">
+            <template v-slot:prepend>
+              <q-icon name="event" class="cursor-pointer">
+                <q-tooltip>Selecione a data</q-tooltip>
+                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                  <q-date v-model="formModel.start_date" mask="DD/MM/YYYY HH:mm" :locale="BRLocale">
+                    <div class="row items-center justify-end">
+                      <q-btn v-close-popup label="Fechar" color="primary" flat />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
 
+            <template v-slot:append>
+              <q-icon name="access_time" class="cursor-pointer">
+                <q-tooltip>Selecione o horário</q-tooltip>
+                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                  <q-time v-model="formModel.start_date" mask="DD/MM/YYYY HH:mm" format24h>
+                    <div class="row items-center justify-end">
+                      <q-btn v-close-popup label="Fechar" color="primary" flat />
+                    </div>
+                  </q-time>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+        </div>
 
+        <div class="col-lg-2">
+          <q-select
+            v-model="stopSelected"
+            :options="stopOptions"
+            label="Tipo de fim"
+          ></q-select>
+        </div>
 
+        <div class="col-lg-3">
+          <q-input v-model="formModel.end_date" label="Data para o fim">
+            <template v-slot:prepend>
+              <q-icon name="event" class="cursor-pointer">
+                <q-tooltip>Selecione a data</q-tooltip>
+                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                  <q-date v-model="formModel.end_date" mask="DD/MM/YYYY HH:mm" :locale="BRLocale">
+                    <div class="row items-center justify-end">
+                      <q-btn v-close-popup label="Fechar" color="primary" flat />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+
+            <template v-slot:append>
+              <q-icon name="access_time" class="cursor-pointer">
+                <q-tooltip>Selecione o horário</q-tooltip>
+                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                  <q-time v-model="formModel.end_date" mask="DD/MM/YYYY HH:mm" format24h>
+                    <div class="row items-center justify-end">
+                      <q-btn v-close-popup label="Fechar" color="primary" flat />
+                    </div>
+                  </q-time>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+        </div>
+      </div>
+    </q-card-section>
+
+    <q-separator inset />
+
+    <q-card-section v-for="(item, index) in formFields" :key="index">
+      <div>{{item.type}}</div>
+    </q-card-section>
+
+    <q-card-section>
+      <div style="display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center">
+        <q-btn style="max-width: 350px" size="sm" color="primary" flat label="Inserir campo">
+          <q-menu>
+            <q-list style="min-width: 100px">
+              <q-item clickable v-close-popup @click="onClickAddField(EFormFieldType.Text)">
+                <q-item-section>Texto</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="onClickAddField(EFormFieldType.MultipleSelect)">
+                <q-item-section>Multipla Escolha</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="onClickAddField(EFormFieldType.SingleSelect)">
+                <q-item-section>Escolha Única</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="onClickAddField(EFormFieldType.Video)">
+                <q-item-section>Vídeo</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="onClickAddField(EFormFieldType.Image)">
+                <q-item-section>Imagem</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="onClickAddField(EFormFieldType.InputField)">
+                <q-item-section>Edição de Texto</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
+      </div>
     </q-card-section>
 
     <q-card-actions>
@@ -40,64 +149,76 @@
 <script lang="ts" setup>
 
 import IForm, {IFormCreate} from 'src/interfaces/IForm';
-import {defineProps, computed} from 'vue';
+import IFormField, {IFormFieldCreate, newFormField, EFormFieldType} from 'src/interfaces/IFormField';
+import {defineProps, computed, ref} from 'vue';
 import {ICategory} from 'src/interfaces/ICategory';
+import {BRDatetimeToDatetime, datetimeToBRDatetime, BRLocale} from '../utils';
 
 interface Props {
   modelValue: IFormCreate | IForm;
   categoryOptions: ICategory[];
 }
 
+enum ScheduleOptions {
+  Imediato = 1,
+  Agendado,
+  Infinito,
+}
+
 const props = defineProps<Props>();
 const emit = defineEmits(['update:modelValue']);
 
-const formModel = computed({
+const launchSelected = ref<null | {label: string, value: number}>(null);
+const stopSelected = ref<null | {label: string, value: number}>(null);
+const agendar = ref(false);
+
+const formFields = ref<IFormField[] | IFormFieldCreate[]>([]);
+
+const launchOptions = [
+  {
+    label: 'Imediato',
+    value: ScheduleOptions.Imediato,
+  },
+  {
+    label: 'Agendado',
+    value: ScheduleOptions.Agendado,
+  },
+]
+
+const stopOptions = [
+  {
+    label: 'Infinito',
+    value: ScheduleOptions.Infinito,
+  },
+  {
+    label: 'Agendado',
+    value: ScheduleOptions.Agendado,
+  },
+]
+
+const formModel = computed<IFormCreate | IForm>({
   get () {
     return props.modelValue;
   },
   set(val) {
-    emit('update:modelValue', val)
+    emit('update:modelValue', val);
   }
 })
+
+function onClickAddField(fieldType: number) {
+  console.log(fieldType)
+  const newField = newFormField(fieldType, formFields.value.length+1);
+  console.log(newField);
+
+  formFields.value.push(newField);
+  // const a = formModel.value.start_date
+  // // console.log(BRDatetimeToDatetime(a))
+  // console.log(BRDatetimeToDatetime(a))
+  // console.log(datetimeToBRDatetime('2001-03-30T00:00:00'))
+}
 
 </script>
 
 <style scoped>
 
 </style>
-
-<!--<template>-->
-<!--  <q-card>-->
-<!--    <q-card-section>-->
-<!--      <q-input label="Título"  v-model="theModel.title"></q-input>-->
-
-<!--    </q-card-section>-->
-<!--  </q-card>-->
-<!--</template>-->
-
-<!--<script lang="ts" setup>-->
-
-<!--import IForm, {IFormCreate} from 'src/interfaces/IForm';-->
-<!--import {onMounted, ref, defineProps, computed} from 'vue';-->
-
-<!--interface Props {-->
-<!--  modelValue: IFormCreate | IForm;-->
-<!--}-->
-
-<!--const props = defineProps<Props>();-->
-<!--const emit = defineEmits(['update:modelValue']);-->
-
-<!--const theModel = computed({-->
-<!--  get () {-->
-<!--    return props.modelValue;-->
-<!--  },-->
-<!--  set(val) {-->
-<!--    emit('update:modelValue', val)-->
-<!--  }-->
-<!--})-->
-
-<!--</script>-->
-
-<!--<style scoped>-->
-
-<!--</style>-->

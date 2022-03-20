@@ -1,15 +1,15 @@
 <template>
   <q-page class="q-gutter-lg q-pa-md">
-    <div class="row" v-for="(form, index) in formsItems" :key="index">
-      <div class="col">
-        <FormEdit v-model="formsItems[index]" :category-options="categoriesItems"/>
-      </div>
-    </div>
     <div class="row">
       <div class="col">
         <div style="display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center">
           <q-btn style="max-width: 350px"  icon-right="add" color="primary" flat label="Adicionar um questionário" @click="onClickAddForm"></q-btn>
         </div>
+      </div>
+    </div>
+    <div class="row" v-for="(form, index) in formsItems" :key="index">
+      <div class="col">
+        <FormEdit v-model="formsItems[index]" :category-options="categoriesItems"/>
       </div>
     </div>
   </q-page>
@@ -36,7 +36,7 @@ function onClickAddForm() {
     category_id: '',
     is_active: false,
   }
-  formsItems.value.push(newForm);
+  formsItems.value.unshift(newForm);
   editing.value = true;
 }
 
