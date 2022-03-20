@@ -108,6 +108,7 @@
     <q-separator inset />
 
     <q-card-section v-for="(item, index) in formFields" :key="index">
+      <FormFieldEdit v-model="formFields[index]" :field-type="item.type"/>
       <div>{{item.type}}</div>
     </q-card-section>
 
@@ -153,6 +154,7 @@ import IFormField, {IFormFieldCreate, newFormField, EFormFieldType} from 'src/in
 import {defineProps, computed, ref} from 'vue';
 import {ICategory} from 'src/interfaces/ICategory';
 import {BRDatetimeToDatetime, datetimeToBRDatetime, BRLocale} from '../utils';
+import FormFieldEdit from 'src/components/FormFieldEdit.vue';
 
 interface Props {
   modelValue: IFormCreate | IForm;
