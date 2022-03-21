@@ -105,12 +105,21 @@
       </div>
     </q-card-section>
 
-    <q-separator inset />
-
     <q-card-section v-for="(item, index) in formFields" :key="index">
-      <FormFieldEdit v-model="formFields[index]" :field-type="item.type"/>
-      <div>{{item.type}}</div>
+      <q-separator class="q-mb-md"  size="3px"/>
+      <div class="row">
+        <div class="col-11">
+          <FormFieldEdit v-model="formFields[index]" :field-type="item.type"/>
+        </div>
+        <div class="col flex justify-center items-center q-pa-md">
+          <q-btn flat color="negative" label="Remover campo" @click="removeField(index)"></q-btn>
+        </div>
+      </div>
+
+
     </q-card-section>
+
+    <q-separator inset />
 
     <q-card-section>
       <div style="display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center">
@@ -217,6 +226,10 @@ function onClickAddField(fieldType: number) {
   // // console.log(BRDatetimeToDatetime(a))
   // console.log(BRDatetimeToDatetime(a))
   // console.log(datetimeToBRDatetime('2001-03-30T00:00:00'))
+}
+
+function removeField(itemIndex: number) {
+  formFields.value.splice(itemIndex, 1);
 }
 
 </script>
