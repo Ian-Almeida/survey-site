@@ -34,6 +34,34 @@
         </div>
       </div>
     </template>
+
+    <template v-else-if="props.fieldType === EFormFieldType.SingleSelect">
+      <div class="row" v-for="(item, index) in fieldModel.single_selection_options" :key="index">
+        <div class="col">
+          <q-btn flat round color="negative" icon="remove" @click="removeSelectsItem(index)"/>
+          <q-checkbox :label="item.label" :model-value="true" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <q-btn flat round color="primary" icon="add" @click="selectsDialog = true"/>
+        </div>
+      </div>
+    </template>
+
+    <template v-else-if="props.fieldType === EFormFieldType.Video">
+      <q-dialog v-model="fieldVideoDialog">
+        <q-card>
+          <q-card-section>{{fieldVideoDialog}}</q-card-section>
+        </q-card>
+
+      </q-dialog>
+      <div class="row">
+        <div class="col">
+<!--          <q-video src="https://www.youtube.com/embed/9BvBRXkJA58" style="height: 400px" />-->
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -51,6 +79,7 @@ const props = defineProps<Props>();
 const emit = defineEmits(['update:modelValue']);
 
 const selectsDialog = ref(false);
+const fieldVideoDialog = ref(true);
 const selectOptionLabel = ref('');
 
 const fieldModel = computed<IFormField | IFormFieldCreate>({
