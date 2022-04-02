@@ -74,7 +74,7 @@
       <q-card style="min-width: 350px">
 
         <q-card-section>
-          <div class="text-h5">Adicionar Categoria</div>
+          <div class="text-h5">{{ !isEditing ? 'Adicionar Categoria' : 'Editar Categoria' }}</div>
         </q-card-section>
 
         <q-card-section>
@@ -112,7 +112,7 @@
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
-          <q-btn flat label="Cancelar" v-close-popup @click="cancelCreateCategory"/>
+          <q-btn flat label="Voltar" color="secondary" v-close-popup @click="cancelCreateCategory"/>
           <q-btn flat label="Confirmar" v-close-popup @click="confirmChangeCategory"/>
         </q-card-actions>
       </q-card>

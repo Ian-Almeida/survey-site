@@ -50,15 +50,60 @@
     </template>
 
     <template v-else-if="props.fieldType === EFormFieldType.Video">
-      <q-dialog v-model="fieldVideoDialog">
+      <q-dialog v-model="fieldVideoDialog" persistent>
         <q-card>
-          <q-card-section>{{fieldVideoDialog}}</q-card-section>
+          <q-card-section><span class="text-h5">Coloque o endereço do vídeo no Youtube</span></q-card-section>
+          <q-separator />
+          <q-card-section>
+            <q-input dense v-model="fieldModel.video_src" autofocus />
+          </q-card-section>
+          <q-card-actions>
+            <q-btn v-close-popup flat label="Voltar" color="secondary"></q-btn>
+            <q-btn v-close-popup flat label="Confirmar" color="primary"></q-btn>
+          </q-card-actions>
         </q-card>
 
       </q-dialog>
       <div class="row">
+        <div class="col" v-if="fieldModel.video_src && !fieldVideoDialog">
+          <q-video :src="parsedYoutubeVideoSrc" style="height: 400px" />
+        </div>
+      </div>
+    </template>
+
+    <template v-else-if="props.fieldType === EFormFieldType.Image">
+      <div class="row">
         <div class="col">
-<!--          <q-video src="https://www.youtube.com/embed/9BvBRXkJA58" style="height: 400px" />-->
+          <q-dialog v-model="fieldImageDialog" persistent>
+            <q-card>
+              <q-card-section><span class="text-h5">Coloque o endereço da imagem</span></q-card-section>
+              <q-separator />
+              <q-card-section>
+                <q-input dense v-model="fieldModel.image_src" autofocus />
+              </q-card-section>
+              <q-card-actions>
+                <q-btn v-close-popup flat label="Voltar" color="secondary"></q-btn>
+                <q-btn v-close-popup flat label="Confirmar" color="primary"></q-btn>
+              </q-card-actions>
+            </q-card>
+
+          </q-dialog>
+          <div class="row">
+            <div class="col" v-if="fieldModel.image_src && !fieldImageDialog">
+              <q-img
+                :src="fieldModel.image_src"
+                spinner-color="white"
+                style="height: 140px; max-width: 150px"
+                alt="Imagem não pode ser carregada ou endereço inválido"
+              >
+                <template v-slot:error>
+                  <div class="absolute-full flex flex-center bg-negative text-white">
+                    Não foi possível carregar a imagem
+                  </div>
+                </template>
+              </q-img>
+            </div>
+          </div>
         </div>
       </div>
     </template>
@@ -80,6 +125,7 @@ const emit = defineEmits(['update:modelValue']);
 
 const selectsDialog = ref(false);
 const fieldVideoDialog = ref(true);
+const fieldImageDialog = ref(true);
 const selectOptionLabel = ref('');
 
 const fieldModel = computed<IFormField | IFormFieldCreate>({
@@ -89,6 +135,11 @@ const fieldModel = computed<IFormField | IFormFieldCreate>({
   set(val) {
     emit('update:modelValue', val);
   }
+})
+
+const parsedYoutubeVideoSrc = computed<string>(() => {
+  const videoId = fieldModel.value.video_src?.split('=')[1];
+  return `https://www.youtube.com/embed/${videoId}`;
 })
 
 function removeSelectsItem(itemIndex: number) {
