@@ -112,13 +112,22 @@
         </div>
       </div>
     </template>
+
+    <template v-else-if="props.fieldType === EFormFieldType.InputField">
+      <div class="row">
+        <div class="col">
+          <p class="text-h5">Campo editável</p>
+          <q-editor v-model="fieldModel.input_text" min-height="5rem" readonly></q-editor>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
 <script lang="ts" setup>
 
 import IFormField, {EFormFieldType, IFormFieldCreate} from 'src/interfaces/IFormField';
-import {computed, defineProps, ref} from 'vue';
+import {computed, defineProps, onMounted, ref} from 'vue';
 
 interface Props {
   modelValue: IFormField | IFormFieldCreate;
@@ -129,8 +138,8 @@ const props = defineProps<Props>();
 const emit = defineEmits(['update:modelValue']);
 
 const selectsDialog = ref(false);
-const fieldVideoDialog = ref(true);
-const fieldImageDialog = ref(true);
+const fieldVideoDialog = ref(false);
+const fieldImageDialog = ref(false);
 const selectOptionLabel = ref('');
 
 const fieldModel = computed<IFormField | IFormFieldCreate>({
@@ -170,6 +179,14 @@ function addSelectsItem() {
 
   selectOptionLabel.value = '';
 }
+
+onMounted(() => {
+  if (props.fieldType === EFormFieldType.Video && !fieldModel.value.video_src) {
+    fieldVideoDialog.value = true;
+  } else if (props.fieldType === EFormFieldType.Image && !fieldModel.value.image_src) {
+    fieldImageDialog.value = true;
+  }
+})
 
 </script>
 
