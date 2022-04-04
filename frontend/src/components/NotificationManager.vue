@@ -11,17 +11,37 @@ import {useQuasar} from 'quasar';
 const notifictionStore = useNotificationStore();
 const $q = useQuasar();
 
-const notifications = computed(() => {
-  return notifictionStore.notificationsQueue;
+const apiNotifications = computed(() => {
+  return notifictionStore.apiNotificationsQueue;
 })
 
-watch(notifications, (val) => {
+const actionsNotifications = computed(() => {
+  return notifictionStore.actionsNotificationsQueue;
+})
+
+watch(apiNotifications, (val) => {
   const notification = val.shift();
 
   if (notification) {
     $q.notify({
       type: notification.type,
       message: notification.message,
+      progress: true,
+      actions: [
+        {label: 'Dispensar', color: 'white', handler: () => { /* ... */ }}
+      ]
+    })
+  }
+}, {deep: true})
+
+watch(actionsNotifications, (val) => {
+  const notification = val.shift();
+
+  if (notification) {
+    $q.notify({
+      type: notification.type,
+      message: notification.message,
+      position: notification.position,
       progress: true,
       actions: [
         {label: 'Dispensar', color: 'white', handler: () => { /* ... */ }}

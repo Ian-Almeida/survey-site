@@ -18,7 +18,7 @@ export const useCategoryStore = defineStore('category', {
       try {
         const response = await api.createCategory(payload);
         if (response) {
-          notificationStore.showNotification('positive', 'Categoria criada com sucesso!');
+          notificationStore.showApiNotification('positive', 'Categoria criada com sucesso!');
           return response.data;
         }
       } catch (e: Error | AxiosError | any ) {
@@ -29,7 +29,7 @@ export const useCategoryStore = defineStore('category', {
       try {
         const response = await api.removeCategory(_id);
         if (response) {
-          notificationStore.showNotification('positive', 'Categoria removida com sucesso!');
+          notificationStore.showApiNotification('positive', 'Categoria removida com sucesso!');
           return;
         }
       } catch (e: Error | AxiosError | any ) {
@@ -40,7 +40,7 @@ export const useCategoryStore = defineStore('category', {
       try {
         const response = await api.updateCategory(payload);
         if (response) {
-          notificationStore.showNotification('positive', 'Categoria atualizada com sucesso!');
+          notificationStore.showApiNotification('positive', 'Categoria atualizada com sucesso!');
           return response.data;
         }
       } catch (e: Error | AxiosError | any ) {

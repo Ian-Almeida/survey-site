@@ -18,10 +18,12 @@
     </q-dialog>
 
     <template v-if="props.fieldType === EFormFieldType.Text">
+      <p class="text-h5">Campo de texto</p>
       <q-editor v-model="fieldModel.text_text" min-height="5rem"></q-editor>
     </template>
 
     <template v-else-if="props.fieldType === EFormFieldType.MultipleSelect">
+      <p class="text-h5">Campo de múltipla escolha</p>
       <div class="row" v-for="(item, index) in fieldModel.multiple_checkbox_options" :key="index">
         <div class="col">
           <q-btn flat round color="negative" icon="remove" @click="removeSelectsItem(index)"/>
@@ -36,6 +38,7 @@
     </template>
 
     <template v-else-if="props.fieldType === EFormFieldType.SingleSelect">
+      <p class="text-h5">Campo de escolha única</p>
       <div class="row" v-for="(item, index) in fieldModel.single_selection_options" :key="index">
         <div class="col">
           <q-btn flat round color="negative" icon="remove" @click="removeSelectsItem(index)"/>
@@ -66,6 +69,7 @@
       </q-dialog>
       <div class="row">
         <div class="col" v-if="fieldModel.video_src && !fieldVideoDialog">
+          <p class="text-h5">Campo de vídeo</p>
           <q-video :src="parsedYoutubeVideoSrc" style="height: 400px" />
         </div>
       </div>
@@ -90,6 +94,7 @@
           </q-dialog>
           <div class="row">
             <div class="col" v-if="fieldModel.image_src && !fieldImageDialog">
+              <p class="text-h5">Campo de imagem</p>
               <q-img
                 :src="fieldModel.image_src"
                 spinner-color="white"

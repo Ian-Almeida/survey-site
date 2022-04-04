@@ -18,7 +18,7 @@ export const useUserStore = defineStore('user', {
       try {
         const response = await api.createUser(payload);
         if (response) {
-          notificationStore.showNotification('positive', 'Usuário criado com sucesso!');
+          notificationStore.showApiNotification('positive', 'Usuário criado com sucesso!');
           return response.data;
         }
       } catch (e: Error | AxiosError | any ) {

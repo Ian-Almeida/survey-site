@@ -151,7 +151,10 @@
     </q-card-section>
 
     <q-card-actions>
-      <q-btn label="Pré visualização"></q-btn>
+      <q-btn label="Salvar" color="positive" flat></q-btn>
+      <q-btn label="Cancelar" color="negative" flat @click="props.onCancelForm" ></q-btn>
+      <q-space />
+      <q-btn label="Pré visualização" flat color="accent"></q-btn>
     </q-card-actions>
   </q-card>
 </template>
@@ -162,12 +165,13 @@ import IForm, {IFormCreate} from 'src/interfaces/IForm';
 import IFormField, {IFormFieldCreate, newFormField, EFormFieldType} from 'src/interfaces/IFormField';
 import {defineProps, computed, ref} from 'vue';
 import {ICategory} from 'src/interfaces/ICategory';
-import {BRDatetimeToDatetime, datetimeToBRDatetime, BRLocale} from '../utils';
-import FormFieldEdit from 'src/components/FormFieldEdit.vue';
+import {BRDatetimeToDatetime, datetimeToBRDatetime, BRLocale} from '../../utils';
+import FormFieldEdit from 'components/forms/FormFieldEdit.vue';
 
 interface Props {
   modelValue: IFormCreate | IForm;
   categoryOptions: ICategory[];
+  onCancelForm: () => void
 }
 
 enum ScheduleOptions {

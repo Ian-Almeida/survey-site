@@ -25,7 +25,7 @@ export const useAuthStore = defineStore('auth', {
         if (response) {
           setAuthorization(response.data);
           this.isLoggedIn = true;
-          notificationStore.showNotification('positive', 'Login efetuado com sucesso!');
+          notificationStore.showApiNotification('positive', 'Login efetuado com sucesso!');
           return response.data;
         }
       } catch (e: Error | AxiosError | any) {
@@ -38,7 +38,7 @@ export const useAuthStore = defineStore('auth', {
     logout() {
       this.isLoggedIn = false;
       removeAuthorization();
-      notificationStore.showNotification('info', 'Sua sessão foi encerrada.')
+      notificationStore.showApiNotification('info', 'Sua sessão foi encerrada.')
     }
   },
   getters: {

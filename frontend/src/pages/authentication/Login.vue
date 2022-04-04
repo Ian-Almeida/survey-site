@@ -18,8 +18,8 @@
           </div>
 
           <div>
-            <q-form ref="loginForm" class="q-gutter-sm">
-              <q-input filled v-model="email" label="E-mail" lazy-rules :rules="validations.email">
+            <q-form ref="loginForm" class="q-gutter-sm" @keyup.enter="onClickLogin">
+              <q-input @keyup.enter="onClickLogin" filled v-model="email" label="E-mail" lazy-rules :rules="validations.email">
                 <template v-slot:prepend>
                   <q-icon name="email"/>
                 </template>
@@ -29,7 +29,7 @@
                 </template>
               </q-input>
 
-              <q-input filled bottom-slots v-model="password" label="Senha" type="password" lazy-rules
+              <q-input @keyup.enter="onClickLogin" filled bottom-slots v-model="password" label="Senha" type="password" lazy-rules
                        :rules="validations.password">
                 <template v-slot:prepend>
                   <q-icon name="lock"/>
@@ -40,27 +40,29 @@
                 </template>
               </q-input>
 
+              <div class="flex full-width justify-between">
+                <div class="text-left" style="font-size: small">
+                  <q-btn flat rounded size="sm" @click="slide = 'signin'">Criar uma conta</q-btn>
+                </div>
+                <div class="text-right" style="font-size: small">
+                  <q-btn flat rounded size="sm" @click="onClickRecovery">Esqueceu sua senha?</q-btn>
+                </div>
+              </div>
+
+              <div class="rows justify-center items-center q-pa-md">
+                <q-btn
+                  v-if="slide === 'login'"
+                  class="full-width"
+                  color="primary"
+                  @click="onClickLogin"
+                  @keyup.enter="onClickLogin"
+                >Entrar</q-btn>
+              </div>
+
             </q-form>
           </div>
 
-          <div class="flex full-width justify-between">
-            <div class="text-left" style="font-size: small">
-              <q-btn flat rounded size="sm" @click="slide = 'signin'">Criar uma conta</q-btn>
-            </div>
-            <div class="text-right" style="font-size: small">
-              <q-btn flat rounded size="sm" @click="onClickRecovery">Esqueceu sua senha?</q-btn>
-            </div>
-          </div>
 
-          <div class="rows justify-center items-center q-pa-md">
-            <q-btn
-              v-if="slide === 'login'"
-              class="full-width"
-              color="primary"
-              @click="onClickLogin"
-              @keyup.enter="onClickLogin()"
-            >Entrar</q-btn>
-          </div>
         </q-carousel-slide>
 
         <q-carousel-slide name="signin">
